@@ -16,7 +16,7 @@ exports.signup = function (req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
   if (!email || !password) {
-    return res.status(422).send({error: 'You mus provide email and password'});
+    return res.status(422).send({error: 'You must provide email and password'});
   }
   user.findOne({
     where:{
@@ -27,22 +27,35 @@ exports.signup = function (req, res, next) {
     if(existingUser){
       return res.status(422).send({error: 'Email is in use'});
     }else{
-      user.create({
-        email,
-        password
-      })
+      user.findAll({})
       .then(result => {
-        const user = {
-          id: result.id,
-          email: result.email,
-          admin: result.isAdmin
+        if (result.length === 0) {
+          return isAdmin = true;
+        } else {
+          return isAdmin = false;
         }
-        if(!result){return res.status(500).send({error:'Cannot create new user'})}
-        else {res.status(200).send({user,token:jwtService.tokenForUser(result)});}
       })
-      .catch(err => {
-        console.log(err);
-        return res.status(500).send(err);
+      .then(isAdmin => {
+        user.create({
+          email,
+          password,
+          isAdmin
+        }, {
+          individualHooks: true
+        })
+        .then(result => {
+          const user = {
+            id: result.id,
+            email: result.email,
+            admin: result.isAdmin
+          }
+          if(!result){return res.status(500).send({error:'Cannot create new user'})}
+          else {res.status(200).send({user,token:jwtService.tokenForUser(result)});}
+        })
+        .catch(err => {
+          console.log(err);
+          return res.status(500).send(err);
+        })
       })
     }
   })

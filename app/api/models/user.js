@@ -5,6 +5,12 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
   });
+
+  user.associate = models => {
+    user.belongsTo(models.participant);
+    user.hasMany(models.judge);
+  };
+
   
   user.beforeSave(user => {
     const salt = bcrypt.genSaltSync(10);

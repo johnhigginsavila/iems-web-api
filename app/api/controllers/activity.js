@@ -1,8 +1,8 @@
 const db = require('../models');
-const { event } = db;
+const { activity } = db;
 
-exports.getEvents = function (req, res, next) {
-  event.findAll({})
+exports.getActivities = function (req, res, next) {
+  activity.findAll({})
   .then(result => {
     res.status(200).send(result);
   })
@@ -11,8 +11,8 @@ exports.getEvents = function (req, res, next) {
   });
 };
 
-exports.getOneEvent = function (req, res, next) {
-  event.findOne({
+exports.getOneActivity = function (req, res, next) {
+  activity.findOne({
     where: {
       id: req.body.id
     }
@@ -24,13 +24,13 @@ exports.getOneEvent = function (req, res, next) {
   })
 };
 
-exports.createEvent = function (req, res, next) {
-  const { activityName, startDate, endDate, category, location, contest } = req.body;
-  event.create({
+exports.createActivity = function (req, res, next) {
+  const { activityName, startDate, endDate, event, location, contest } = req.body;
+  activity.create({
     activityName,
     startDate,
     endDate,
-    category,
+    event,
     location,
     contest
   }).then(result => {
@@ -45,19 +45,26 @@ exports.createEvent = function (req, res, next) {
   })
 }
 
-exports.updateEvent = function (req, res, next) {
-  const { activityName, startDate, endDate, category, location, contest } = req.body;
-  event.update({
-    where: {
-      id: req.params.id
-    }
-  },{
+exports.updateActivity = function (req, res, next) {
+  const { activityName, startDate, endDate, event, location } = req.body;
+  let contest;
+  if(req.body.contest === undefined) {
+    contest = null;
+  } else {
+    contest = req.body.contest;
+  }
+  activity.update({
     activityName,
     startDate,
     endDate,
-    category,
+    event,
     location,
     contest
+  }, {
+    where: {
+      id: req.params.id
+    },
+    individualHooks: true
   }).then(result => {
     if(!result){
       return res.status(400).send({error:'Invalid Inputs'});
@@ -70,16 +77,21 @@ exports.updateEvent = function (req, res, next) {
   })
 }
 
-exports.deleteEvent = function (req, res, next) {
-  event.delete({
+exports.deleteActivity = function (req, res, next) {
+  activity.destroy({
     where: {
       id: req.params.id
-    }
+    },
+    individualHooks: true
   })
   .then(result => {
-    res.status(200).send(result);
+    if(result === 0) {
+      res.status(400).send({error: `activity ID: ${req.params.id} is not existing.`});
+    } else {
+      res.status(200).send({message: `activity ID: ${req.params.id} has been deleted.`});
+    }
   })
   .catch(err => {
-    return res.status(500).send({error: `Cannot delete event ID: ${req.params.id} at this time.`});
+    return res.status(500).send({error: `Cannot delete activity ID: ${req.params.id} at this time.`});
   })
 }

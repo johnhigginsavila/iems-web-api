@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   user.associate = models => {
-    user.belongsTo(models.participant);
+    user.hasMany(models.userParticipant);
     user.hasMany(models.judge);
   };
 
@@ -18,3 +18,4 @@ module.exports = (sequelize, DataTypes) => {
   });
   return user;
 }
+

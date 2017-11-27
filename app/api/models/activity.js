@@ -1,15 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
   const activity = sequelize.define('activity', {
     activityName: { type: DataTypes.STRING, allowNull: false, isUpperCase: true },
+    description: { type: DataTypes.STRING, allowNull: false, isUpperCase: true },
     startDate: { type: DataTypes.DATE, allowNull: false },
     endDate: { type: DataTypes.DATE, allowNull: false },
-    event: { type: DataTypes.STRING, isUpperCase: true },
     location: { type: DataTypes.STRING, isUpperCase: true },
     contest: { type:DataTypes.BOOLEAN, defaultValue: false }
   });
 
   activity.associate = models => {
-    activity.hasMany(models.contest);
+    activity.belongsTo(models.event);
+    activity.hasMany(models.participant);
+    activity.hasMany(models.activityParticipant);
+    activity.hasMany(models.judge);
   };
 
   activity.beforeUpdate( activity => {

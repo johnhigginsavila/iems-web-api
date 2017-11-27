@@ -7,7 +7,7 @@ exports.getActivities = function (req, res, next) {
     res.status(200).send(result);
   })
   .catch(err => {
-    return res.status(500).send({error: 'Cannot get events at this time.'});
+    return res.status(500).send({error: 'Cannot get activities at this time.'});
   });
 };
 
@@ -25,12 +25,14 @@ exports.getOneActivity = function (req, res, next) {
 };
 
 exports.createActivity = function (req, res, next) {
-  const { activityName, startDate, endDate, event, location, contest } = req.body;
+  const { eventId } = req.params;
+  const { activityName, startDate, endDate, location, contest, description } = req.body;
   activity.create({
+    eventId,
     activityName,
+    description,
     startDate,
     endDate,
-    event,
     location,
     contest
   }).then(result => {
@@ -41,12 +43,12 @@ exports.createActivity = function (req, res, next) {
     }
   })
   .catch(err => {
-    return res.status(500).send({err: 'Cannot create an event at this time.'});
+    return res.status(500).send({err: 'Cannot create an activity at this time.'});
   })
 }
 
 exports.updateActivity = function (req, res, next) {
-  const { activityName, startDate, endDate, event, location } = req.body;
+  const { activityName, startDate, endDate, location, description } = req.body;
   let contest;
   if(req.body.contest === undefined) {
     contest = null;
@@ -55,9 +57,9 @@ exports.updateActivity = function (req, res, next) {
   }
   activity.update({
     activityName,
+    description,
     startDate,
     endDate,
-    event,
     location,
     contest
   }, {
@@ -73,7 +75,7 @@ exports.updateActivity = function (req, res, next) {
     }
   })
   .catch(err => {
-    return res.status(500).send({error: `Cannot update event id: ${req.params.id} at this time.`});
+    return res.status(500).send({error: `Cannot update activity id: ${req.params.id} at this time.`});
   })
 }
 

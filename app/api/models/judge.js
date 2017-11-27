@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   judge.associate = models => {
-    judge.belongsTo(models.contest);
+    judge.belongsTo(models.activity);
     judge.belongsTo(models.user);
   };
 

@@ -120,4 +120,3 @@ exports.unjoinContest = function (req, res, next) {
 		res.status(500).send({message: `Unjoining unsuccessful, encountered an error.`});
 	});
 }
-

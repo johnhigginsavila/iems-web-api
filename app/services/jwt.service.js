@@ -1,5 +1,5 @@
 const jwt = require('jwt-simple');
-const config = require('../../../config');
+const config = require('../../config');
 module.exports = {
   tokenForUser: (user) => {
     const timestamp = new Date().getTime();
